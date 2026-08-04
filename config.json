@@ -1,0 +1,11 @@
+{
+  "siteTitle": "Aether",
+  "siteTitleSuffix": "",
+  "siteDescription": "A simple static site",
+  "github": "isa0-gh",
+  "navLinks": [
+    { "label": "Blog",    "url": "#" },
+    { "label": "Archive", "url": "#" },
+    { "label": "About",   "url": "#" }
+  ]
+}
