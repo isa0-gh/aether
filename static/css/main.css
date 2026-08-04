@@ -252,6 +252,48 @@ body {
     display: block;
 }
 
+/* Search */
+.search-form {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 260px;
+}
+
+.search-input {
+    width: 100%;
+    background: #1f2129;
+    border: 1px solid #4a4f5c;
+    border-radius: 4px;
+    color: aliceblue;
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.search-input::placeholder { color: #6b7280; }
+.search-input:focus { border-color: #8ec5ff; }
+
+/* Clear button rendered by browser inside search inputs */
+.search-input::-webkit-search-cancel-button { cursor: pointer; }
+
+.search-meta {
+    max-width: 760px;
+    margin: 12px auto 0;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    color: #8d94a2;
+    box-sizing: border-box;
+}
+
+mark {
+    background: transparent;
+    color: #8ec5ff;
+    font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .navbar { padding: 6px 8px; }
