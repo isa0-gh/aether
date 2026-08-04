@@ -59,7 +59,7 @@ function renderPost(post, slug) {
 
     app.innerHTML = `
         <div class="post-view">
-            <a class="back-link" onclick="showFeed(); return false;" href="#">← Back</a>
+            <a class="back-link" onclick="showFeed(); return false;" href="#"><img src="images/back.svg" alt="Back" class="back-icon"></a>
             ${post.image ? `<div class="news-thumbnail-frame" style="margin-bottom:16px"><img src="${imgSrc(post.image)}" class="news-thumbnail" alt="${post.title}"></div>` : ''}
             <h1>${post.title || 'Untitled'}</h1>
             ${metaMarkup}
