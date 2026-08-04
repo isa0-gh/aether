@@ -48,7 +48,7 @@ function imgSrc(filename) {
 }
 function renderPost(post, slug) {
     const app = document.getElementById('app');
-    const rendered = post.body ? marked.parse(post.body.trim()) : '';
+    const rendered = post.body ? md.render(post.body.trim()) : '';
 
     const metaItems = [];
     if (post.date) metaItems.push(`<span class="meta-chip">${getRelativeTime(post.date)}</span>`);
