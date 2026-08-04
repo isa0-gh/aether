@@ -1,3 +1,6 @@
+// Markdown renderer (markdown-it, loaded via CDN before this script)
+const md = markdownit({ html: false, linkify: true, typographer: true });
+
 // Parse YAML-like frontmatter from a markdown string.
 // Returns { meta: {}, body: '' }
 function parseFrontmatter(text) {
