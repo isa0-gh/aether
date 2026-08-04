@@ -149,6 +149,16 @@ async function openPost(slug) {
 // ── Bootstrap ──────────────────────────────────────────────────────────────
 
 async function boot() {
+    mountSearchBar();
+
+    // ?q= takes priority, then hash deep-link, then feed
+    const params = new URLSearchParams(location.search);
+    const q = params.get('q');
+    if (q) {
+        // mountSearchBar already handles this — nothing to do
+        return;
+    }
+
     const hash = location.hash.slice(1);
     if (hash) {
         await openPost(hash);
@@ -158,7 +168,11 @@ async function boot() {
 }
 
 window.addEventListener('popstate', async e => {
-    if (e.state && e.state.slug) {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('q');
+    if (q) {
+        await runSearch(q);
+    } else if (e.state && e.state.slug) {
         await openPost(e.state.slug);
     } else {
         await showFeed();
