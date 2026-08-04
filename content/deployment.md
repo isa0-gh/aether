@@ -2,6 +2,7 @@
 title: "Deploying with GitHub Pages"
 date: "2026-08-02"
 tags: "docs"
+image: pages.png
 preview: Push to main and your site deploys automatically via the included GitHub Actions workflow.
 ---
 
