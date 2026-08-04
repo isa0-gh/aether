@@ -70,6 +70,11 @@ func Build(opts Options) error {
 		return err
 	}
 
+	// Write search.json — pre-compiled search index
+	if err := writeSearchIndex(opts.OutputDir, posts); err != nil {
+		return err
+	}
+
 	// Copy markdown posts to public/posts/
 	if err := copyPosts(opts.ContentDir, opts.OutputDir, posts); err != nil {
 		return err
@@ -140,6 +145,39 @@ func writePostsManifest(outputDir string, posts []markdown.Post) error {
 	}
 
 	return os.WriteFile(filepath.Join(outputDir, "posts.json"), data, 0644)
+}
+
+// searchEntry is one record in the search index.
+type searchEntry struct {
+	Slug    string `json:"slug"`
+	Title   string `json:"title"`
+	Tags    string `json:"tags"`
+	Preview string `json:"preview"`
+	Date    string `json:"date"`
+	// Body is included so full-text search works client-side.
+	Body string `json:"body"`
+}
+
+// writeSearchIndex writes a JSON array of searchable post fields.
+func writeSearchIndex(outputDir string, posts []markdown.Post) error {
+	entries := make([]searchEntry, len(posts))
+	for i, p := range posts {
+		entries[i] = searchEntry{
+			Slug:    p.Slug,
+			Title:   p.Title,
+			Tags:    p.Tags,
+			Preview: p.Preview,
+			Date:    p.Date,
+			Body:    p.Body,
+		}
+	}
+
+	data, err := json.Marshal(entries)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath.Join(outputDir, "search.json"), data, 0644)
 }
 
 // copyPosts copies .md files to public/posts/.
