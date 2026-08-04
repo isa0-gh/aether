@@ -186,32 +186,131 @@ body {
 
 /* Content body (rendered markdown) */
 .content-body {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #cfd3de;
-    line-height: 1.45;
+    line-height: 1.65;
     overflow-wrap: anywhere;
 }
 
-.content-body p { margin: 0 0 0.35em; }
+.content-body p { margin: 0 0 0.8em; }
 
 .content-body h1,
 .content-body h2,
 .content-body h3,
 .content-body h4 {
-    font-size: 1em;
-    margin: 0.4em 0 0.2em;
+    color: #f2f4f8;
     font-weight: 600;
+    line-height: 1.25;
+    margin: 1.4em 0 0.4em;
+    padding-bottom: 0.2em;
 }
+
+.content-body h1 { font-size: 1.5em; border-bottom: 1px solid #4a4f5c; }
+.content-body h2 { font-size: 1.25em; border-bottom: 1px solid #4a4f5c; }
+.content-body h3 { font-size: 1.05em; }
+.content-body h4 { font-size: 0.95em; }
 
 .content-body ul,
 .content-body ol {
-    margin: 0.2em 0 0.4em 1.2em;
+    margin: 0 0 0.8em 1.4em;
     padding: 0;
 }
 
+.content-body li { margin-bottom: 0.2em; }
+
 .content-body strong { font-weight: 600; color: #f2f4f8; }
-.content-body em    { color: #dfe4ea; }
+.content-body em    { color: #dfe4ea; font-style: italic; }
 .content-body a     { color: #8ec5ff; text-decoration: none; }
+.content-body a:hover { text-decoration: underline; }
+
+.content-body hr {
+    border: 0;
+    border-top: 1px solid #4a4f5c;
+    margin: 1.2em 0;
+}
+
+.content-body blockquote {
+    margin: 0.8em 0;
+    padding: 0.4em 0 0.4em 1em;
+    border-left: 3px solid #4a4f5c;
+    color: #8d94a2;
+}
+
+.content-body blockquote p { margin: 0; }
+
+/* Inline code */
+.content-body code {
+    font-family: 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 0.85em;
+    background: #2c2f3a;
+    color: #e06c75;
+    border-radius: 3px;
+    padding: 0.15em 0.35em;
+}
+
+/* Code blocks */
+.content-body pre {
+    background: #2c2f3a;
+    border: 1px solid #3a3f4c;
+    border-radius: 6px;
+    padding: 1em 1.2em;
+    overflow-x: auto;
+    margin: 0.8em 0;
+}
+
+.content-body pre code {
+    background: none;
+    color: #abb2bf;
+    padding: 0;
+    font-size: 0.88em;
+    border-radius: 0;
+}
+
+/* GitHub-style tables */
+.content-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.8em 0;
+    font-size: 0.85em;
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid #3a3f4c;
+}
+
+.content-body thead {
+    background: #2c2f3a;
+}
+
+.content-body th {
+    padding: 8px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #f2f4f8;
+    border-bottom: 2px solid #3a3f4c;
+    white-space: nowrap;
+}
+
+.content-body td {
+    padding: 7px 14px;
+    border-top: 1px solid #3a3f4c;
+    vertical-align: top;
+}
+
+.content-body tr:nth-child(even) td {
+    background: #252830;
+}
+
+.content-body tr:hover td {
+    background: #2c2f3a;
+}
+
+/* Images inside posts */
+.content-body img {
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+    margin: 0.8em auto;
+}
 
 .item-divider {
     border: 0;
