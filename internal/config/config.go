@@ -17,6 +17,7 @@ type Site struct {
 	SiteTitleSuffix string    `json:"siteTitleSuffix"`
 	SiteDescription string    `json:"siteDescription"`
 	GitHub          string    `json:"github"`
+	BaseURL         string    `json:"baseURL"`
 	NavLinks        []NavLink `json:"navLinks"`
 
 	// Resolved at build time, not from config.json

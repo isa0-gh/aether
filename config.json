@@ -3,9 +3,10 @@
   "siteTitleSuffix": "",
   "siteDescription": "A simple static site",
   "github": "isa0-gh",
+  "baseURL": "https://isa0-gh.github.io/aether",
   "navLinks": [
-    { "label": "Blog",    "url": "#" },
-    { "label": "Archive", "url": "#" },
-    { "label": "About",   "url": "#" }
+    { "label": "Sitemap", "url": "sitemap.xml" },
+    { "label": "RSS",     "url": "rss.xml" },
+    { "label": "GitHub",  "url": "https://github.com/isa0-gh/aether" }
   ]
 }

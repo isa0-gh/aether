@@ -3,10 +3,13 @@ package builder
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/isa0-gh/aether/internal/config"
 	"github.com/isa0-gh/aether/internal/feed"
@@ -57,6 +60,11 @@ func Build(opts Options) error {
 		return err
 	}
 
+	// Write robots.txt
+	if err := writeRobots(opts, cfg); err != nil {
+		return err
+	}
+
 	// Write posts.json — the manifest the JS uses to discover posts
 	if err := writePostsManifest(opts.OutputDir, posts); err != nil {
 		return err
@@ -72,6 +80,16 @@ func Build(opts Options) error {
 		return err
 	}
 
+	// Generate sitemap.xml and rss.xml
+	if cfg.BaseURL != "" {
+		if err := writeSitemap(opts.OutputDir, cfg.BaseURL, posts); err != nil {
+			return err
+		}
+		if err := writeRSS(opts.OutputDir, cfg, posts); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -84,6 +102,23 @@ func writeIndex(opts Options, cfg *config.Site) error {
 	}
 
 	out, err := os.Create(filepath.Join(opts.OutputDir, "index.html"))
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	return tmpl.Execute(out, cfg)
+}
+
+// writeRobots renders templates/robots.txt into public/robots.txt.
+func writeRobots(opts Options, cfg *config.Site) error {
+	tmplPath := filepath.Join(opts.TemplateDir, "robots.txt")
+	tmpl, err := template.ParseFiles(tmplPath)
+	if err != nil {
+		return err
+	}
+
+	out, err := os.Create(filepath.Join(opts.OutputDir, "robots.txt"))
 	if err != nil {
 		return err
 	}
@@ -151,4 +186,109 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	return os.WriteFile(dst, data, 0644)
+}
+
+// ── Sitemap ────────────────────────────────────────────────────────────────
+
+type sitemapURL struct {
+	Loc     string `xml:"loc"`
+	LastMod string `xml:"lastmod,omitempty"`
+}
+
+type sitemap struct {
+	XMLName xml.Name     `xml:"urlset"`
+	Xmlns   string       `xml:"xmlns,attr"`
+	URLs    []sitemapURL `xml:"url"`
+}
+
+func writeSitemap(outputDir, baseURL string, posts []markdown.Post) error {
+	base := strings.TrimRight(baseURL, "/")
+
+	urls := []sitemapURL{{Loc: base + "/"}}
+	for _, p := range posts {
+		u := sitemapURL{Loc: base + "/#" + p.Slug}
+		if p.Date != "" {
+			u.LastMod = p.Date
+		}
+		urls = append(urls, u)
+	}
+
+	sm := sitemap{
+		Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+		URLs:  urls,
+	}
+
+	data, err := xml.MarshalIndent(sm, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	out := append([]byte(xml.Header), data...)
+	return os.WriteFile(filepath.Join(outputDir, "sitemap.xml"), out, 0644)
+}
+
+// ── RSS ────────────────────────────────────────────────────────────────────
+
+type rssItem struct {
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	Description string `xml:"description"`
+	PubDate     string `xml:"pubDate,omitempty"`
+	GUID        string `xml:"guid"`
+}
+
+type rssChannel struct {
+	Title       string    `xml:"title"`
+	Link        string    `xml:"link"`
+	Description string    `xml:"description"`
+	Language    string    `xml:"language"`
+	LastBuild   string    `xml:"lastBuildDate"`
+	Items       []rssItem `xml:"item"`
+}
+
+type rssFeed struct {
+	XMLName xml.Name   `xml:"rss"`
+	Version string     `xml:"version,attr"`
+	Channel rssChannel `xml:"channel"`
+}
+
+func writeRSS(outputDir string, cfg *config.Site, posts []markdown.Post) error {
+	base := strings.TrimRight(cfg.BaseURL, "/")
+
+	items := make([]rssItem, 0, len(posts))
+	for _, p := range posts {
+		link := base + "/#" + p.Slug
+		item := rssItem{
+			Title:       p.Title,
+			Link:        link,
+			GUID:        link,
+			Description: p.Preview,
+		}
+		if p.Date != "" {
+			if t, err := time.Parse("2006-01-02", p.Date); err == nil {
+				item.PubDate = t.UTC().Format(time.RFC1123Z)
+			}
+		}
+		items = append(items, item)
+	}
+
+	feed := rssFeed{
+		Version: "2.0",
+		Channel: rssChannel{
+			Title:       cfg.SiteTitle,
+			Link:        base + "/",
+			Description: cfg.SiteDescription,
+			Language:    "en",
+			LastBuild:   time.Now().UTC().Format(time.RFC1123Z),
+			Items:       items,
+		},
+	}
+
+	data, err := xml.MarshalIndent(feed, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	out := append([]byte(xml.Header), data...)
+	return os.WriteFile(filepath.Join(outputDir, "rss.xml"), out, 0644)
 }
